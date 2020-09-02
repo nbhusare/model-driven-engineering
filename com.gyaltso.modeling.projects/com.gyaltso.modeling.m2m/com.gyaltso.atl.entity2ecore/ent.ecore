@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="PKG01" nsURI="http://www.gyaltso.com/model/PKG01" nsPrefix="PKG01">
+  <eClassifiers xsi:type="ecore:EClass" name="ENT01" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ATT01">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ATT02" transient="true">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ENT02" eSuperTypes="//ENT01">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ATT21">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ATT22" transient="true">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ATT23" eType="//ENUM1"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ATT24" eType="//ENT01"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ENUM1">
+    <eLiterals name="L1"/>
+    <eLiterals name="L2" value="1"/>
+    <eLiterals name="L3" value="2"/>
+  </eClassifiers>
+</ecore:EPackage>

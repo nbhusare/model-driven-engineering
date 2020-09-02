@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:entity="http://www.gyaltso.com/model/entity">
+  <entity:Package name="PKG01">
+    <entities xsi:type="entity:ConcreteEntity" name="ENT01" abstract="true">
+      <attributes name="ATT01" datatype="/1"/>
+      <attributes name="ATT02" transient="true" datatype="/2"/>
+    </entities>
+    <entities xsi:type="entity:ConcreteEntity" name="ENT02" superEntity="/0/@entities.0">
+      <attributes name="ATT21" datatype="/1"/>
+      <attributes name="ATT22" transient="true" datatype="/3"/>
+      <attributes name="ATT23" datatype="/0/@entities.2"/>
+      <attributes name="ATT24" datatype="/0/@entities.0"/>
+    </entities>
+    <entities xsi:type="entity:Enumeration" name="ENUM1">
+      <literals name="L1"/>
+      <literals name="L2"/>
+      <literals name="L3"/>
+    </entities>
+  </entity:Package>
+  <entity:DataType name="String"/>
+  <entity:DataType name="Boolean"/>
+  <entity:DataType name="Integer"/>
+</xmi:XMI>

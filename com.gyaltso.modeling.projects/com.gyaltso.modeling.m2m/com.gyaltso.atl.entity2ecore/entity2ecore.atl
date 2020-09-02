@@ -1,0 +1,104 @@
+-- @path Entity=/com.gyaltso.ecore.model.entity/model/entity.ecore
+-- @nsURI Ecore=http://www.eclipse.org/emf/2002/Ecore
+
+
+module entity2ecore;
+create OUT: Ecore from IN: Entity;
+
+helper def: literalValue: Integer =
+	0;
+
+rule Package2EPackage {
+	from
+		package: Entity!Package
+	to
+		ePackage: Ecore!EPackage (
+			name <- package.name,
+			nsPrefix <- package.name,
+			nsURI <- 'http://www.gyaltso.com/model/' + package.name,
+			eClassifiers <- package.entities
+		)
+}
+
+rule Entity2EClass {
+	from
+		entity: Entity!Entity (
+			entity.oclIsTypeOf(Entity!ConcreteEntity)
+		)
+	to
+		eClassifier: Ecore!EClass (
+			name <- entity.name,
+			abstract <- entity.abstract,
+			eSuperTypes <- if not entity.superEntity.oclIsUndefined() then
+					Sequence{entity.superEntity}
+				else
+					Sequence {}
+				endif,
+			eStructuralFeatures <- entity.attributes
+		)
+}
+
+rule Entity2Enum {
+	from
+		entity: Entity!Entity (
+			entity.oclIsTypeOf(Entity!Enumeration)
+		)
+	to
+		eClassifier: Ecore!EEnum (
+			name <- entity.name,
+			eLiterals <- entity.literals
+		)
+}
+
+rule Attribute2EAttribute {
+	from
+		attribute: Entity!Attribute (
+			not attribute.datatype.oclIsKindOf(Entity!Entity)
+		)
+	to
+		eAttribute: Ecore!EAttribute (
+			name <- attribute.name,
+			transient <- attribute.transient,
+			volatile <- attribute.volatile,
+			eType <- thisModule.getDataType(attribute.datatype)
+		)
+}
+
+rule Attribute2EReference {
+	from
+		attribute: Entity!Attribute (
+			attribute.datatype.oclIsKindOf(Entity!Entity)
+		)
+	to
+		eReference: Ecore!EReference (
+			name <- attribute.name,
+			eType <- attribute.datatype
+		)
+}
+
+rule Attribute2ELiteral {
+	from
+		attribute: Entity!Literal
+	to
+		eAttribute: Ecore!EEnumLiteral (
+			name <- attribute.name.toUpper(),
+			value <- thisModule.literalValue
+		)
+	do {
+		thisModule.literalValue <- thisModule.literalValue + 1; 
+	}
+}
+
+helper def: getDataType(dataType: Entity!DataType): Ecore!EDataType =
+	let dataTypeName: String =
+		dataType.name
+	in
+		if dataTypeName = 'String' then
+			Ecore!EString
+		else
+			if dataTypeName = 'Boolean' then
+				Ecore!EBoolean
+			else
+				Ecore!EInt
+			endif
+		endif;

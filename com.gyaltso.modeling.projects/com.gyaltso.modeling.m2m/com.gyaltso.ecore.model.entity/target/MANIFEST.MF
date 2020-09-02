@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: com.gyaltso.ecore.model.entity
+Bundle-SymbolicName: com.gyaltso.ecore.model.entity;singleton:=true
+Require-Bundle: org.eclipse.core.runtime,org.eclipse.emf.ecore;visibil
+ ity:=reexport,org.eclipse.emf.ecore.xmi
+Bundle-ManifestVersion: 2
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: %providerName
+Export-Package: com.gyaltso.ecore.model.entity,com.gyaltso.ecore.model
+ .entity.impl,com.gyaltso.ecore.model.entity.util
+Bundle-Name: %pluginName
+Bundle-Version: 1.0.0.202009020632
+Bundle-ClassPath: .
+Bundle-Localization: plugin
+
