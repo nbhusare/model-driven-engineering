@@ -1,0 +1,134 @@
+-- @path Entity=/com.gyaltso.ecore.model.entity/model/entity.ecore
+-- @nsURI Ecore=http://www.eclipse.org/emf/2002/Ecore
+
+
+module entity2ecorelazyrule;
+create OUT: Ecore from IN: Entity;
+
+helper def: literalValue: Integer =
+	0;
+
+--- A Matched rule is invoked automatically, and only once for a given match.
+rule Package2EPackage {
+	from
+		package: Entity!Package
+	to
+		ePackage: Ecore!EPackage (
+			name <- package.name,
+			nsPrefix <- package.name,
+			nsURI <- 'http://www.gyaltso.com/model/' + package.name,
+			eSubpackages <- Sequence{thisModule.Package2EntitiesEPackage(package),
+						thisModule.Package2EnumsEPackage(package)}
+		)
+}
+
+--- A Lazy rule is invoked explicitly for a specific matching element. It
+--- can be invoked multiple times for an element.
+lazy rule Package2EntitiesEPackage {
+	from
+		package: Entity!Package
+	to
+		ePackage: Ecore!EPackage (
+			name <- 'entities',
+			nsPrefix <- 'entities',
+			nsURI <- 'http://www.gyaltso.com/model/entities',
+			eClassifiers <- package.entities -> select(entity | entity.
+					oclIsTypeOf(Entity!ConcreteEntity))
+		)
+}
+
+lazy rule Package2EnumsEPackage {
+	from
+		package: Entity!Package
+	to
+		ePackage: Ecore!EPackage (
+			name <- 'enums',
+			nsPrefix <- 'enums',
+			nsURI <- 'http://www.gyaltso.com/model/enums',
+			eClassifiers <- package.entities -> select(entity | entity.
+					oclIsTypeOf(Entity!Enumeration))
+		)
+}
+
+rule Entity2EClass {
+	from
+		entity: Entity!Entity (
+			entity.oclIsTypeOf(Entity!ConcreteEntity)
+		)
+	to
+		eClassifier: Ecore!EClass (
+			name <- entity.name,
+			abstract <- entity.abstract,
+			eSuperTypes <- if not entity.superEntity.oclIsUndefined() then
+					Sequence{entity.superEntity}
+				else
+					Sequence {}
+				endif,
+			eStructuralFeatures <- entity.attributes
+		)
+}
+
+rule Entity2Enum {
+	from
+		entity: Entity!Entity (
+			entity.oclIsTypeOf(Entity!Enumeration)
+		)
+	to
+		eClassifier: Ecore!EEnum (
+			name <- entity.name,
+			eLiterals <- entity.literals
+		)
+}
+
+rule Attribute2EAttribute {
+	from
+		attribute: Entity!Attribute (
+			not attribute.datatype.oclIsKindOf(Entity!Entity)
+		)
+	to
+		eAttribute: Ecore!EAttribute (
+			name <- attribute.name,
+			transient <- attribute.transient,
+			volatile <- attribute.volatile,
+			eType <- thisModule.getDataType(attribute.datatype)
+		)
+}
+
+rule Attribute2EReference {
+	from
+		attribute: Entity!Attribute (
+			attribute.datatype.oclIsKindOf(Entity!Entity)
+		)
+	to
+		eReference: Ecore!EReference (
+			name <- attribute.name,
+			eType <- attribute.datatype
+		)
+}
+
+rule Attribute2ELiteral {
+	from
+		attribute: Entity!Literal
+	to
+		eAttribute: Ecore!EEnumLiteral (
+			name <- attribute.name.toUpper(),
+			value <- thisModule.literalValue
+		)
+	do {
+		thisModule.literalValue <- thisModule.literalValue + 1; 
+	}
+}
+
+helper def: getDataType(dataType: Entity!DataType): Ecore!EDataType =
+	let dataTypeName: String =
+		dataType.name
+	in
+		if dataTypeName = 'String' then
+			Ecore!EString
+		else
+			if dataTypeName = 'Boolean' then
+				Ecore!EBoolean
+			else
+				Ecore!EInt
+			endif
+		endif;
